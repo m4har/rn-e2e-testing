@@ -1,117 +1,122 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
-import React from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
-  ScrollView,
+  FlatList,
+  TextInput,
+  TouchableOpacity,
   View,
   Text,
-  StatusBar,
 } from 'react-native';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-declare var global: {HermesInternal: null | {}};
-
 const App = () => {
+  const [state, setState] = useState({
+    data: [{id: 0, text: 'Lorem Ipsum'}],
+    input: '',
+  });
+  // action
+  const onSetInput = (text: string) =>
+    setState((prev) => ({...prev, input: text}));
+  const onAddData = () =>
+    setState((prev) => ({
+      data: [...prev.data, {text: prev.input, id: prev.data.length + 1}],
+      input: '',
+    }));
+  const onDeleteData = (id: number) => () => {
+    const newDataDelete = state.data.filter((item) => item.id !== id);
+    setState((prev) => ({...prev, data: newDataDelete}));
+  };
+  // flatlist helper
+  const keyExtractor = (item: {id: number; text: string}, index: number) =>
+    index.toLocaleString();
+  const renderItem = (props: {
+    item: {id: number; text: string};
+    index: number;
+  }) => {
+    const {item, index} = props;
+    return (
+      <View style={styles.cardContainer}>
+        <Text style={styles.textItem}>{`${index + 1}. ${item.text}`}</Text>
+        <TouchableOpacity
+          testID={`deleteData${index}`}
+          onPress={onDeleteData(item.id)}
+          style={styles.deleteButton}>
+          <Text>X</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.tsx</Text> to change
-                this screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
+    <SafeAreaView style={styles.container}>
+      {/* input */}
+      <View style={styles.containerInput}>
+        <TextInput
+          value={state.input}
+          placeholder="Type Something"
+          style={styles.input}
+          onChangeText={onSetInput}
+          testID="inputData"
+        />
+        <TouchableOpacity
+          onPress={onAddData}
+          testID="addData"
+          style={styles.buttonInput}>
+          <Text>UPDATE</Text>
+        </TouchableOpacity>
+      </View>
+      {/* list */}
+      <FlatList
+        data={state.data}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+      />
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+  container: {
+    flex: 1,
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
+  containerInput: {
+    flexDirection: 'row',
+    margin: 10,
   },
-  body: {
-    backgroundColor: Colors.white,
+  input: {
+    width: '80%',
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 5,
   },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  buttonInput: {
+    flex: 1,
+    backgroundColor: '#2ecc71',
+    borderRadius: 10,
+    marginHorizontal: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
+  cardContainer: {
+    flexDirection: 'row',
+    height: 50,
+    backgroundColor: '#ecf0f1',
+    marginVertical: 5,
+    marginHorizontal: 16,
+    padding: 10,
+    borderRadius: 10,
+    elevation: 5,
+    alignItems: 'center',
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
+  textItem: {
+    width: '90%',
   },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
+  deleteButton: {
+    flex: 1,
+    backgroundColor: '#e74c3c',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 5,
   },
 });
 
