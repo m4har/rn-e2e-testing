@@ -18,7 +18,7 @@ android still not working because use RN 0.62, waiting major update from detox
 ## Usage example
 
 ```bash
-# you need detox cli, pelase read official docs detox
+# you need detox-cli, pelase read official docs detox
 $ > yarn start # running server bundler
 $ > detox build -c ios.sim.debug # build for ios
 $ > detox test -c ios.sim.debug # running simple test
