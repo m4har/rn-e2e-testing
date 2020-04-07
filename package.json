@@ -2,6 +2,10 @@
   "name": "e2e",
   "version": "0.0.1",
   "private": true,
+  "author": {
+    "email": "mahardicka404@gmail.com",
+    "name": "Mahardicka"
+  },
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
